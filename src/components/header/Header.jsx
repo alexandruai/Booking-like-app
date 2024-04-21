@@ -83,7 +83,7 @@ import {
               </h1>
               <p className="headerDesc">
                 Get rewarded for your travels – unlock instant savings of 10% or
-                more with a free CristiBooking account
+                more with a free CristiBooking account!
               </p>
               <button className="headerBtn">Sign in / Register</button>
               <div className="headerSearch">
