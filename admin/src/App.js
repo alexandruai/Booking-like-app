@@ -50,7 +50,7 @@ function App() {
                 }
               />
               <Route
-                path=":userId"
+                path="/users/:id"
                 element={
                   <ProtectedRoute>
                     <Single />
@@ -76,7 +76,7 @@ function App() {
                 }
               />
               <Route
-                path=":productId"
+                path="find/:id"
                 element={
                   <ProtectedRoute>
                     <Single />
@@ -87,7 +87,7 @@ function App() {
                 path="new"
                 element={
                   <ProtectedRoute>
-                    <NewHotel  />
+                    <NewHotel />
                   </ProtectedRoute>
                 }
               />
@@ -102,7 +102,7 @@ function App() {
                 }
               />
               <Route
-                path=":productId"
+                path="/rooms/:id"
                 element={
                   <ProtectedRoute>
                     <Single />
@@ -113,7 +113,7 @@ function App() {
                 path="new"
                 element={
                   <ProtectedRoute>
-                    <NewRoom  />
+                    <NewRoom />
                   </ProtectedRoute>
                 }
               />

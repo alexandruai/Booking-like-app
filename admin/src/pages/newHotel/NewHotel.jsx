@@ -11,6 +11,7 @@ const NewHotel = () => {
   const [files, setFiles] = useState("");
   const [info, setInfo] = useState({});
   const [rooms, setRooms] = useState([]);
+  const [saved, setSaved] = useState(false);
 
   const { data, loading, error } = useFetch("/rooms");
 
@@ -37,11 +38,13 @@ const NewHotel = () => {
           data.append("file", file);
           data.append("upload_preset", "upload");
           const uploadRes = await axios.post(
-            "https://api.cloudinary.com/v1_1/lamadev/image/upload",
+            "https://api.cloudinary.com/dgmhzmnav/lamadev/image/upload",
             data
           );
 
           const { url } = uploadRes.data;
+          setSaved(true);
+          console.log("Hotel created")
           return url;
         })
       );
@@ -100,13 +103,13 @@ const NewHotel = () => {
                   />
                 </div>
               ))}
-              <div className="formInput">
+              {/* <div className="formInput">
                 <label>Featured</label>
                 <select id="featured" onChange={handleChange}>
                   <option value={false}>No</option>
                   <option value={true}>Yes</option>
                 </select>
-              </div>
+              </div> */}
               <div className="selectRooms">
                 <label>Rooms</label>
                 <select id="rooms" multiple onChange={handleSelect}>
@@ -121,6 +124,7 @@ const NewHotel = () => {
                 </select>
               </div>
               <button onClick={handleClick}>Send</button>
+              {saved && <div>Saved</div>}
             </form>
           </div>
         </div>

@@ -11,10 +11,10 @@ const useFetch = async (url) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        console.log("FetchData ")
+        // console.log("FetchData ")
         const res = await axios.get(url);
-        console.log("FetchData " + res.data)
-        setData(res.data);
+        console.log("FetchData " + res.data[0]._id)
+        setData(res.data.type);
         console.log("FetchData after data set")
         return res.data;
       } catch (err) {
@@ -40,7 +40,7 @@ const useFetch = async (url) => {
     setLoading(false);
   };
 
-  return { data, loading, error, reFetch };
+  return { data, loading, error };
 };
 
 export default useFetch;

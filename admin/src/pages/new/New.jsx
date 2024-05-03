@@ -8,6 +8,7 @@ import axios from "axios";
 const New = ({ inputs, title }) => {
   const [file, setFile] = useState("");
   const [info, setInfo] = useState({});
+  const [saved, setSaved] = useState(false);
 
   const handleChange = (e) => {
     setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -20,7 +21,7 @@ const New = ({ inputs, title }) => {
     data.append("upload_preset", "upload");
     try {
       const uploadRes = await axios.post(
-        "https://api.cloudinary.com/v1_1/lamadev/image/upload",
+        "https://api.cloudinary.com/dgmhzmnav/lamadev/image/upload",
         data
       );
 
@@ -32,6 +33,7 @@ const New = ({ inputs, title }) => {
       };
 
       await axios.post("/auth/register", newUser);
+      setSaved(true);
     } catch (err) {
       console.log(err);
     }
@@ -83,6 +85,7 @@ const New = ({ inputs, title }) => {
                 </div>
               ))}
               <button onClick={handleClick}>Send</button>
+              {saved && <div>Saved</div>}
             </form>
           </div>
         </div>
