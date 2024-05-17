@@ -19,7 +19,6 @@ const Datatable = ({ columns }) => {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`/${path}`);
-        console.log("Ceva trebuie sa iasa")
         await setList(data);
         setFilteredData(data);
       } catch (error) {
@@ -30,19 +29,29 @@ const Datatable = ({ columns }) => {
     fetchData();
   }, [path]);
 
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(`/${path}/${id}`);
-  //     setList(list.filter((item) => item._id !== id));
-  //   } catch (err) { }
-  // };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/${path}/${id}`);
+      console.log(id);
+      if (path === "rooms") {
+        const responseHotel = await axios.get(`/${path}/${id}`);
+
+        if (!responseHotel) {
+          console.log("Hotel not found")
+          throw new Error("Hotel not found")
+        } else {
+          const hotelId = responseHotel.data._id;
+          await axios.delete(`/${path}/${id}/${hotelId}`);
+        }
+      } else {
+        await axios.delete(`/${path}/${id}`);
+      }
+      
       setList(list.filter((item) => item._id !== id));
       setFilteredData(filteredData.filter((item) => item._id !== id));
-    } catch (err) { }
+    } catch (err) {
+      console.log(err);
+     }
   };
 
   const handleSearch = (event) => {

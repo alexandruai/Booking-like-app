@@ -80,3 +80,28 @@ export const getRoom = async (req, res, next) => {
     next(err);
   }
 };
+export const getRoomHotelId = async (req, res, next) => {
+  try {
+    // Find the room by ID
+    const room = await Room.findById(req.params.id);
+    
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+
+    const roomGroupId = room.roomGroupId;
+    console.log("GroupId ", roomGroupId);
+
+    // Find the hotel with the matching roomGroupId
+    const hotel = await Hotel.findOne({ hotelRoomGroup: roomGroupId });
+
+    if (!hotel) {
+      return res.status(404).json({ message: 'Hotel not found' });
+    }
+
+    // Return the hotel's ID
+    res.status(200).json({ hotelId: hotel._id });
+  } catch (err) {
+    next(err);
+  }
+};

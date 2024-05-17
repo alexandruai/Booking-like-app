@@ -90,11 +90,10 @@ const Header = ({ type }) => {
         {type !== "list" && (
           <>
             <h1 className="headerTitle">
-              A lifetime of discounts? It's Genius.
+              BEST BOOKING SITE EVER
             </h1>
             <p className="headerDesc">
-              Get rewarded for your travels – unlock instant savings of 10% or
-              more with a free CristiBooking account
+              GET YOUR DREAM ACCOMODATION IN YOUR DREAM DESTINATION WITH US
             </p>
 
             <div className="headerSearch">
