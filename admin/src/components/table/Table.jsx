@@ -43,6 +43,7 @@ const List = () => {
             <TableCell className="tableCell">Unavailable Dates</TableCell>
             <TableCell className="tableCell">Total Price</TableCell>
             <TableCell className="tableCell">Price/Night</TableCell>
+            <TableCell className="tableCell">Payment Method</TableCell>            
             <TableCell className="tableCell">City</TableCell>
           </TableRow>
         </TableHead>
@@ -65,6 +66,7 @@ const List = () => {
                       </TableCell>
                       <TableCell className="tableCell">{(room.price * roomNumber.unavailableDates.length) - 1}</TableCell>
                       <TableCell className="tableCell">{room.price}</TableCell>
+                      <TableCell className="tableCell">{roomNumber.payments[0].method}</TableCell>
                       <TableCell className="tableCell">{hotel.city}</TableCell>
                     </TableRow>
                   );
