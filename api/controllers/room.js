@@ -34,12 +34,14 @@ export const updateRoom = async (req, res, next) => {
   }
 };
 export const updateRoomAvailability = async (req, res, next) => {
+  const { dates, paymentMethod } = req.body;
   try {
     await Room.updateOne(
       { "roomNumbers._id": req.params.id },
       {
         $push: {
-          "roomNumbers.$.unavailableDates": req.body.dates
+          "roomNumbers.$.unavailableDates": dates,
+          "roomNumbers.$.payments": { date: new Date(), method: paymentMethod }
         },
       }
     );

@@ -1,31 +1,32 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-
-import "./reserve.css";
-import useFetch from "../../hooks/useFetch";
 import { useContext, useState } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./reserve.css";
+import useFetch from "../../hooks/useFetch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import StripePaymentForm from "../StripePaymentForm";
+
+const stripePromise = loadStripe("your-stripe-public-key");
 
 const Reserve = ({ setOpen, hotelId }) => {
   const [selectedRooms, setSelectedRooms] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const { data, loading, error } = useFetch(`/hotels/room/${hotelId}`);
   const { dates } = useContext(SearchContext);
 
   const getDatesInRange = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-
     const date = new Date(start.getTime());
-
     const dates = [];
-
     while (date <= end) {
       dates.push(new Date(date).getTime());
       date.setDate(date.getDate() + 1);
     }
-
     return dates;
   };
 
@@ -35,7 +36,6 @@ const Reserve = ({ setOpen, hotelId }) => {
     const isFound = roomNumber.unavailableDates.some((date) =>
       alldates.includes(new Date(date).getTime())
     );
-
     return !isFound;
   };
 
@@ -51,20 +51,31 @@ const Reserve = ({ setOpen, hotelId }) => {
 
   const navigate = useNavigate();
 
-  const handleClick = async () => {
+  const handlePaymentSuccess = async (paymentMethod) => {
     try {
       await Promise.all(
         selectedRooms.map((roomId) => {
-          const res = axios.put(`/rooms/availability/${roomId}`, {
+          return axios.put(`/rooms/availability/${roomId}`, {
             dates: alldates,
+            paymentMethod: paymentMethod.id,
           });
-          return res.data;
         })
       );
       setOpen(false);
+      alert("Payment done. Your reservation has been saved.");
       navigate("/");
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+      alert("There was an error processing your reservation. Please try again.");
+    }
   };
+
+  const handleClick = async () => {
+    if (paymentMethod === "cash") {
+      await handlePaymentSuccess({ id: "cash" });
+    }
+  };
+
   return (
     <div className="reserve">
       <div className="rContainer">
@@ -86,7 +97,7 @@ const Reserve = ({ setOpen, hotelId }) => {
             </div>
             <div className="rSelectRooms">
               {item.roomNumbers.map((roomNumber) => (
-                <div className="room">
+                <div className="room" key={roomNumber._id}>
                   <label>{roomNumber.number}</label>
                   <input
                     type="checkbox"
@@ -99,9 +110,26 @@ const Reserve = ({ setOpen, hotelId }) => {
             </div>
           </div>
         ))}
-        <button onClick={handleClick} className="rButton">
-          Reserve Now!
-        </button>
+        <div className="rPayment">
+          <span>Select payment method:</span>
+          <br />
+          <br />
+          <select onChange={(e) => setPaymentMethod(e.target.value)}>
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+          </select>
+        </div>
+        {paymentMethod === "card" ? (
+          <Elements stripe={stripePromise}>
+            <br />
+            <StripePaymentForm handlePaymentSuccess={handlePaymentSuccess} />
+            <br />
+          </Elements>
+        ) : (
+          <button onClick={handleClick} className="rButton">
+            Reserve Now!
+          </button>
+        )}
       </div>
     </div>
   );
