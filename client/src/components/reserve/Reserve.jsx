@@ -1,9 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./reserve.css";
-import useFetch from "../../hooks/useFetch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { Elements } from "@stripe/react-stripe-js";
@@ -15,8 +14,24 @@ const stripePromise = loadStripe("your-stripe-public-key");
 const Reserve = ({ setOpen, hotelId }) => {
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const { data, loading, error } = useFetch(`/hotels/room/${hotelId}`);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { dates } = useContext(SearchContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/hotels/room/${hotelId}`);
+        setData(res.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [hotelId]);
 
   const getDatesInRange = (startDate, endDate) => {
     const start = new Date(startDate);
@@ -75,6 +90,9 @@ const Reserve = ({ setOpen, hotelId }) => {
       await handlePaymentSuccess({ id: "cash" });
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data</div>;
 
   return (
     <div className="reserve">
